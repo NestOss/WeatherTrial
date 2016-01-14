@@ -145,7 +145,7 @@ public class LocalTimeServiceImplTest {
     }
 
     @Test
-    public void shouldThrowRestServiceExceptionForErrorResponceLocalTime()
+    public void shouldThrowRestServiceExceptionForErrorResponseLocalTime()
             throws IOException, ParseException {
         // arrange
         String jsonResponseString
