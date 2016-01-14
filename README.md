@@ -1,4 +1,4 @@
-<h1>Weather Trial<h1>
+<h1>Weather Trial</h1>
 
 This is a rest service implemented using Sping Boot. The service returns current temperature and
 3 days forecast minimum temperature for the city.
