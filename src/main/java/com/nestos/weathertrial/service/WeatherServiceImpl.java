@@ -6,7 +6,6 @@ import com.nestos.weathertrial.dto.FiveDaysWeatherForecast;
 import com.nestos.weathertrial.dto.LocalTimeForGeoLocation;
 import com.nestos.weathertrial.dto.WeatherServiceResult;
 import com.nestos.weathertrial.exception.RestServiceException;
-import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -64,16 +63,16 @@ public class WeatherServiceImpl implements WeatherService {
      */
     @Override
     public CurrentWeatherForOneLocation getCurrentWeatherForCity(String cityName, String units) {
-        URI uri = UriComponentsBuilder.newInstance()
+        UriComponentsBuilder ucb = UriComponentsBuilder.newInstance()
                 .scheme("http").host(PROVIDER_HOST).path(CURRENT_WEATHER_SERVICE_PATH)
                 .queryParam(CITY_QUALIFIER_PARAM_NAME, cityName)
                 .queryParam(APPLICATION_ID_PARAM_NAME, APP_ID)
-                .queryParam(UNITS_PARAM_NAME, units)
-                .build().encode().toUri();
+                .queryParam(UNITS_PARAM_NAME, units); 
         ResponseEntity<CurrentWeatherForOneLocation> responseEntity
-                = restTemplate.getForEntity(uri, CurrentWeatherForOneLocation.class);
+                = restTemplate.getForEntity(ucb.toUriString(), CurrentWeatherForOneLocation.class);
         CurrentWeatherForOneLocation currentWeather = responseEntity.getBody();
-        validateWeatherServiceResult(currentWeather, responseEntity, uri.toString());
+        validateWeatherServiceResult(currentWeather, responseEntity,
+                 ucb.replaceQueryParam(APPLICATION_ID_PARAM_NAME, "***").toUriString());
         return currentWeather;
     }
 
@@ -90,16 +89,16 @@ public class WeatherServiceImpl implements WeatherService {
     @Override
     public FiveDaysWeatherForecast getFiveDaysWeatherForecastForCity(String cityName,
             String units) {
-        URI uri = UriComponentsBuilder.newInstance()
+        UriComponentsBuilder ucb = UriComponentsBuilder.newInstance()
                 .scheme("http").host(PROVIDER_HOST).path(FIVE_DAYS_FORECAST_WEATHER_SERVICE_PATH)
                 .queryParam(CITY_QUALIFIER_PARAM_NAME, cityName)
                 .queryParam(APPLICATION_ID_PARAM_NAME, APP_ID)
-                .queryParam(UNITS_PARAM_NAME, units)
-                .build().encode().toUri();
+                .queryParam(UNITS_PARAM_NAME, units);
         ResponseEntity<FiveDaysWeatherForecast> responseEntity
-                = restTemplate.getForEntity(uri, FiveDaysWeatherForecast.class);
+                = restTemplate.getForEntity(ucb.toUriString(), FiveDaysWeatherForecast.class);
         FiveDaysWeatherForecast fiveDaysWeatherForecast = responseEntity.getBody();
-        validateWeatherServiceResult(fiveDaysWeatherForecast, responseEntity, uri.toString());
+        validateWeatherServiceResult(fiveDaysWeatherForecast, responseEntity,
+                ucb.replaceQueryParam(APPLICATION_ID_PARAM_NAME, "***").toUriString());
         return fiveDaysWeatherForecast;
     }
 

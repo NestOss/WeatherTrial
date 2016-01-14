@@ -3,7 +3,6 @@ package com.nestos.weathertrial.service;
 import com.nestos.weathertrial.dto.GeoLocation;
 import com.nestos.weathertrial.dto.LocalTimeForGeoLocation;
 import com.nestos.weathertrial.exception.RestServiceException;
-import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,12 +31,11 @@ public class LocalTimeServiceImpl implements LocalTimeService {
 
     //----------------------Constructors---------------------------------------
     //----------------------Methods--------------------------------------------
-
     @Autowired(required = false) // false for test suit
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-    
+
     /**
      * Returns the local time for geo location.
      *
@@ -49,18 +47,18 @@ public class LocalTimeServiceImpl implements LocalTimeService {
      */
     @Override
     public LocalTimeForGeoLocation getLocalTimeForGeoLocation(GeoLocation geoLocation) {
-        URI uri = UriComponentsBuilder.newInstance()
+        UriComponentsBuilder ucb = UriComponentsBuilder.newInstance()
                 .scheme("http").host(PROVIDER_HOST).path(TIME_ZONE_SERVICE_PATH)
                 .queryParam(LONGITUDE_PARAM_NAME, geoLocation.getLongitude())
                 .queryParam(LATITUDE_PARAM_NAME, geoLocation.getLatitude())
-                .queryParam(USER_PARAM_NAME, USER_NAME)
-                .build().encode().toUri();
+                .queryParam(USER_PARAM_NAME, USER_NAME);
         ResponseEntity<LocalTimeForGeoLocation> responseEntity
-                = restTemplate.getForEntity(uri, LocalTimeForGeoLocation.class);
+                = restTemplate.getForEntity(ucb.toUriString(), LocalTimeForGeoLocation.class);
         LocalTimeForGeoLocation localTimeForGeoLocation = responseEntity.getBody();
         Map<String, String> errorStatusMap = localTimeForGeoLocation.getErrorStatus();
         if (errorStatusMap != null) {
-            throw new RestServiceException(HttpStatus.BAD_REQUEST, uri.toString() + " -> "
+            throw new RestServiceException(HttpStatus.BAD_REQUEST, 
+                    ucb.replaceQueryParam(USER_PARAM_NAME, "***").toUriString() + " -> "
                     + errorStatusMap.get(ERROR_MESSAGE_FIELD_NAME));
         }
         return localTimeForGeoLocation;

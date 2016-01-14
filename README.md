@@ -33,4 +33,4 @@ Response example:
 
 Response example for bad request:
 
-{"cod":404,"message":"http://openweathermap.org/data/2.5/weather?q=&APPID=8f18aeee6c736d3d84ff65f69be68c87&units=metric -> Error: Not found city"}
+{"cod":404,"message":"http://openweathermap.org/data/2.5/weather?q=&units=metric&APPID=*** -> Error: Not found city"}

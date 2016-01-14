@@ -18,9 +18,7 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -29,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -155,14 +152,13 @@ public class LocalTimeServiceImplTest {
                 = getResourceAsString(ERROR_RESPONSE_JSON_RESOURCE);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(jsonResponseString);
-        URI uri = UriComponentsBuilder.newInstance()
+        UriComponentsBuilder ucb = UriComponentsBuilder.newInstance()
                 .scheme("http").host(PROVIDER_HOST)
                 .path(TIME_ZONE_SERVICE_PATH)
                 .queryParam(LONGITUDE_PARAM_NAME, VALID_LONGITUDE_VALUE)
                 .queryParam(LATITUDE_PARAM_NAME, VALID_LATITUDE_VALUE)
-                .queryParam(USER_PARAM_NAME, USER_NAME)
-                .build().encode().toUri();
-        mockServer.expect(requestTo(uri.toString()))
+                .queryParam(USER_PARAM_NAME, USER_NAME);
+        mockServer.expect(requestTo(ucb.toUriString()))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(
                         withSuccess(jsonResponseString, MediaType.APPLICATION_JSON));
@@ -176,7 +172,8 @@ public class LocalTimeServiceImplTest {
             fail("shouldThrowRestServiceExceptionForErrorLocalTime");
         } catch (RestServiceException e) {
             // assert
-            assertEquals(uri.toString() + " -> "
+            assertEquals(ucb.replaceQueryParam(USER_PARAM_NAME, "***").toUriString()
+                    + " -> "
                     + root.findValue("status").findValue("message").asText(),
                     e.getMessage());
             assertEquals(HttpStatus.BAD_REQUEST, e.getHttpStatus());
