@@ -1,9 +1,7 @@
 package com.nestos.weathertrial.config;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -11,9 +9,7 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author Roman Osipov
  */
-@Configuration
-@ComponentScan(basePackages = "com.nestos.weathertrial")
-@EnableAutoConfiguration
+@SpringBootApplication(scanBasePackages = "com.nestos.weathertrial")
 public class AppConfig {
 
     @Bean
